@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!--    <bean id="engine" class="org.example.PetrolEngine"/>-->
+<!--    <bean id="car" class="org.example.Car" autowire="byName"/>-->
+<!--    <bean id="car" class="org.example.Car" autowire="constructor"/>-->
+
+<!--    autowire="no" (DEFAULT)-->
+<!--    <bean id="engine" class="org.example.PetrolEngine"/>-->
+
+<!--    <bean id="car" class="org.example.Car">-->
+<!--        <property name="engine" ref="engine"/>-->
+<!--    </bean>-->
+
+<!--    autowire="byName"-->
+<!--    <bean id="engine" class="org.example.PetrolEngine"/>-->
+
+<!--    <bean id="car" class="org.example.Car" autowire="byName"/>-->
+
+<!--    autowire="byType"-->
+    <bean id="engine1" class="org.example.PetrolEngine"/>
+
+    <bean id="car" class="org.example.Car" autowire="byType"/>
+
+<!--    autowire="constructor"-->
+<!--    <bean id="engine" class="org.example.PetrolEngine"/>-->
+
+<!--    <bean id="car" class="org.example.Car" autowire="constructor"/>-->
+
+<!--    autowire="autodetect" ❌ (Deprecated)-->
+
+<!--    Tries constructor first-->
+
+<!--    Falls back to byType-->
+
+<!--    ❌ Removed in modern Spring-->
+</beans>
