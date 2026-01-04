@@ -4,6 +4,7 @@ import com.bookmyshow.bookmyshow.entity.Booking;
 import com.bookmyshow.bookmyshow.entity.Movie;
 import com.bookmyshow.bookmyshow.service.BookingService;
 import com.bookmyshow.bookmyshow.service.BookingServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,7 +21,15 @@ public class BookingController {
 
     // BOOK SHOW
     @PostMapping
-    public Booking bookShow(@Valid @RequestBody Booking booking){
+    public Booking bookShow(@RequestBody Booking booking,
+                            HttpServletRequest request) {
+
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) {
+            throw new RuntimeException("UserId not found in JWT");
+        }
+
+        booking.getUser().setId(userId);
         return bookingService.bookShow(booking);
     }
 

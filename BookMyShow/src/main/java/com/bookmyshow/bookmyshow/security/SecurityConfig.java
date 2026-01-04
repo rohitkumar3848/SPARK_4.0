@@ -1,86 +1,73 @@
 package com.bookmyshow.bookmyshow.security;
 
+import com.bookmyshow.bookmyshow.security.jwt.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // REST APIs → CSRF not needed
+                // =========================
+                // CSRF
+                // =========================
                 .csrf(csrf -> csrf.disable())
 
+                // =========================
+                // AUTHORIZATION RULES
+                // =========================
                 .authorizeHttpRequests(auth -> auth
 
-                        // =========================
-                        // USER APIs
-                        // =========================
+                        // ---------- AUTH ----------
+                        .requestMatchers("/auth/**").permitAll()
 
-                        // Signup (PUBLIC)
+                        // ---------- USER ----------
                         .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-
-                        // Get all users (ADMIN only)
                         .requestMatchers(HttpMethod.GET, "/api/users").hasRole("ADMIN")
 
-                        // =========================
-                        // THEATRE APIs
-                        // =========================
-
-                        // Fetch theatres (PUBLIC)
+                        // ---------- THEATRE ----------
                         .requestMatchers(HttpMethod.GET, "/api/theatres/**").permitAll()
-
-                        // Add theatre (ADMIN)
                         .requestMatchers(HttpMethod.POST, "/api/theatres/**").hasRole("ADMIN")
 
-                        // =========================
-                        // MOVIE APIs
-                        // =========================
-
-                        // Fetch movies (PUBLIC)
+                        // ---------- MOVIE ----------
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
-
-                        // Add movie (ADMIN)
                         .requestMatchers(HttpMethod.POST, "/api/movies/**").hasRole("ADMIN")
 
-                        // =========================
-                        // SHOW APIs
-                        // =========================
-
-                        // Fetch shows by city (PUBLIC)
+                        // ---------- SHOW ----------
                         .requestMatchers(HttpMethod.GET, "/api/shows/**").permitAll()
-
-                        // Add show (ADMIN)
                         .requestMatchers(HttpMethod.POST, "/api/shows/**").hasRole("ADMIN")
 
-                        // =========================
-                        // BOOKING APIs
-                        // =========================
-
-                        // Book show (USER)
+                        // ---------- BOOKING ----------
                         .requestMatchers(HttpMethod.POST, "/user/bookings/**").hasRole("USER")
-
-                        // Get booking by user (USER + ADMIN)
                         .requestMatchers(HttpMethod.GET, "/user/bookings/**")
                         .hasAnyRole("USER", "ADMIN")
 
-                        // =========================
-                        // DEFAULT RULE
-                        // =========================
-
+                        // ---------- DEFAULT ----------
                         .anyRequest().authenticated()
                 )
 
-                // HTTP Basic Auth (Spring Security 6+)
-                .httpBasic(Customizer.withDefaults());
+                // =========================
+                // JWT FILTER
+                // =========================
+                .addFilterBefore(
+                        jwtAuthenticationFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                );
 
         return http.build();
     }

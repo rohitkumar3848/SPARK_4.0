@@ -20,5 +20,5 @@ public class SpringSecurity03Application {
 //- @EnableMethodSecurity enables role checks
 //- @PreAuthorize used on service methods
     //In this setup, URL-based security ensures authentication, while method-level security using @PreAuthorize enforces role-based authorization at the service layer, which is a recommended best practice.
-    
+
 }
